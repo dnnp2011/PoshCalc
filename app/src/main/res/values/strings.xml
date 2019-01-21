@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">PoshCalc</string>
     <string name="action_settings">Settings</string>
+    <string name="settings_button_descr">Settings Button</string>
+    <string name="purchase_price_header">Enter Purchase Price</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="poshcalc">PoshCalc</string>
+    <string name="item_purchase_price">Item purchase price</string>
+    <string name="dollar_sign">$</string>
+    <string name="calculate">Calculate</string>
+    <string name="projected_sell_price">Projected Sell Price</string>
 </resources>

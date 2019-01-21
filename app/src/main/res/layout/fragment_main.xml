@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".MainFragment"
+                                             android:id="@+id/mainFragmentConstraintLayout">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/purchase_price_header"
+            android:id="@+id/purchasePriceHeaderView" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            android:textSize="30sp"
+            android:textColor="@color/colorTextPrimary" android:labelFor="@+id/purchasePriceInput"
+            android:layout_marginTop="7dp"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:ems="10"
+            android:id="@+id/purchasePriceInput"
+            android:layout_marginTop="28dp" app:layout_constraintTop_toBottomOf="@+id/purchasePriceHeaderView"
+            app:layout_constraintEnd_toEndOf="@+id/purchasePriceHeaderView"
+            app:layout_constraintStart_toStartOf="@+id/purchasePriceHeaderView"
+            app:layout_constraintHorizontal_bias="0.507" android:contentDescription="@string/item_purchase_price"
+            android:focusable="auto" android:maxLines="1" android:minLines="1"
+            android:textColor="@color/colorTextPrimary" android:textSize="30sp" android:width="150dp"
+            android:foregroundTint="@color/colorTextPrimary"
+            android:theme="@style/AppTheme" android:autofillHints="Price you paid for the item"
+            android:gravity="center_horizontal"/>
+    <TextView
+            android:text="@string/dollar_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/dollarSignView"
+            app:layout_constraintEnd_toStartOf="@+id/purchasePriceInput" android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/purchasePriceInput"
+            app:layout_constraintTop_toTopOf="@+id/purchasePriceInput" android:textColor="@color/colorTextPrimary"
+            android:textSize="30sp" android:width="30dp" android:gravity="end"/>
+
+    <Button
+            android:text="@string/calculate"
+            android:layout_width="187dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/calculateButton"
+            android:layout_marginTop="48dp"
+            app:layout_constraintTop_toBottomOf="@+id/purchasePriceInput"
+            app:layout_constraintEnd_toEndOf="@+id/purchasePriceHeaderView"
+            app:layout_constraintStart_toStartOf="@+id/purchasePriceHeaderView"
+            android:theme="@style/AppTheme"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/colorAccent"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="7"
+            android:shadowDy="5"
+            android:shadowRadius="10"/>
+
+    <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toBottomOf="@+id/calculateButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:cardCornerRadius="10dp"
+            android:visibility="visible"
+            android:id="@+id/resultsCardViewLayout">
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                        android:text="@string/projected_sell_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/sellPriceHeader"
+                        android:theme="@style/AppTheme"
+                        android:textAppearance="@style/TextAppearance.AppCompat"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textSize="28sp"
+                        app:layout_constraintTop_toBottomOf="@+id/calculateButton"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintHorizontal_bias="0.496"
+                        android:gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:labelFor="@+id/priceRangeLinearLayout"/>
+
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        android:id="@+id/priceRangeLinearLayout">
+
+                    <android.support.constraint.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:id="@+id/priceRangeConstraintLayout">
+
+                        <TextView
+                                android:text="$25.23"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/targetSellPriceView"
+                                android:layout_weight="1"
+                                android:gravity="start"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textSize="18sp"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/priceRangeLine"
+                                android:layout_marginEnd="8dp"
+                                app:layout_constraintStart_toEndOf="@+id/priceRangeLine"
+                                android:layout_marginStart="8dp"
+                                android:paddingEnd="15dp"/>
+
+                        <TextView
+                                android:text="$35.34"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/minSellPriceView"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textSize="18sp"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="@+id/priceRangeLine"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"
+                                app:layout_constraintEnd_toStartOf="@+id/priceRangeLine"
+                                android:paddingStart="10dp"/>
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/priceRangeLine"
+                                android:background="@drawable/ic_capped_line"
+                                android:tint="@color/colorAccent"
+                                android:backgroundTint="@color/colorAccent"
+                                app:layout_constraintTop_toBottomOf="@+id/targetSellPriceView"
+                                app:layout_constraintRight_toRightOf="parent"
+                                android:layout_marginTop="10dp"
+                                android:layout_gravity="center_horizontal"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                android:contentDescription="Price range drawable"/>
+                    </android.support.constraint.ConstraintLayout>
+                </LinearLayout>
+
+                <TextView
+                        android:text="Item Price Code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/priceCodeHeader"
+                        android:layout_marginTop="30dp"
+                        android:layout_gravity="center"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textSize="24sp"
+                        android:labelFor="@+id/priceCodeView"/>
+
+                <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="20dp"
+                        android:background="@drawable/ic_layout_border"
+                        android:id="@+id/priceCodeFrameLayout"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="13dp"
+                        android:layout_marginBottom="10dp">
+
+                    <TextView
+                            android:text="AL - MS"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/priceCodeView"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textColor="@android:color/white"
+                            android:textSize="44sp"/>
+                </FrameLayout>
+            </LinearLayout>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+
+</android.support.constraint.ConstraintLayout>
