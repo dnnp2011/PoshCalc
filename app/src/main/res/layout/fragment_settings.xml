@@ -1,14 +1,292 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".SettingsFragment">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".SettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
+            android:text="@string/priceEquation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/priceEquationView"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="16sp"
+            android:textStyle="italic"
+            tools:layout_editor_absoluteY="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-</FrameLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:id="@+id/row1"
+            android:layout_marginTop="75dp"
+            app:layout_constraintTop_toBottomOf="@+id/priceEquationView"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+            <TextView
+                    android:text="@string/taxes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/taxHeader"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textStyle="normal|bold"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:minLines="1"
+                    android:textSize="28sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/space"
+                    android:labelFor="@+id/taxView"
+                    />
+
+            <Space
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:foregroundGravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/space"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="5"
+                    android:id="@+id/taxView"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme"
+                    android:textColor="@color/colorTextPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/space"
+                    />
+        </android.support.constraint.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:id="@+id/row2"
+            android:layout_marginTop="75dp"
+            app:layout_constraintTop_toBottomOf="@+id/row3"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+            <TextView
+                    android:text="Capital ($)"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/capitalHeader"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textStyle="normal|bold"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:minLines="1"
+                    android:textSize="28sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/space"
+                    android:labelFor="@+id/capitalView"
+                    />
+
+            <Space
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:foregroundGravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/space"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="5"
+                    android:id="@+id/capitalView"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme"
+                    android:textColor="@color/colorTextPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/space"
+                    />
+        </android.support.constraint.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:id="@+id/row3"
+            android:layout_marginTop="75dp"
+            app:layout_constraintTop_toBottomOf="@+id/row1"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+            <TextView
+                    android:text="Profit ($)"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/profitHeader"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textStyle="normal|bold"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:minLines="1"
+                    android:textSize="28sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/space"
+                    android:labelFor="@+id/profitView"
+                    />
+
+            <Space
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:foregroundGravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/space"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:id="@+id/profitView"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme"
+                    android:textColor="@color/colorTextPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/space"
+                    android:ems="5"
+                    />
+        </android.support.constraint.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:id="@+id/row4"
+            android:layout_marginTop="75dp"
+            app:layout_constraintTop_toBottomOf="@+id/row2"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp">
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+            <TextView
+                    android:text="Fees (%)"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/feeHeader"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textStyle="normal|bold"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:minLines="1"
+                    android:textSize="28sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/space"
+                    android:labelFor="@+id/feeView"
+                    />
+
+            <Space
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:foregroundGravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/space"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="5"
+                    android:id="@+id/feeView"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme"
+                    android:textColor="@color/colorTextPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/space"
+                    />
+        </android.support.constraint.ConstraintLayout>
+
+    </LinearLayout>
+
+    <Button
+            android:text="Save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            android:theme="@style/AppTheme"
+            android:textColor="@color/colorTextPrimary"
+            android:backgroundTint="@color/colorAccent"
+            android:textSize="30sp"
+            android:layout_marginTop="76dp"
+            app:layout_constraintTop_toBottomOf="@+id/row4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="60dp"
+            android:layout_marginStart="60dp"
+            android:textAllCaps="false"/>
+
+</android.support.constraint.ConstraintLayout>

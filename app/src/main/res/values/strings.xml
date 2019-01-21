@@ -11,4 +11,7 @@
     <string name="dollar_sign">$</string>
     <string name="calculate">Calculate</string>
     <string name="projected_sell_price">Projected Sell Price</string>
+    <string name="price_code_chart">Price Code Chart:</string>
+    <string name="taxes">Taxes (%)</string>
+    <string name="priceEquation">$Price = $Purchase + $Profit + $Capital + %Tax + %Fees</string>
 </resources>

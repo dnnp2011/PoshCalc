@@ -18,7 +18,7 @@ import android.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MainActivity extends Activity implements MainFragment.OnFragmentInteractionListener {
+public class MainActivity extends Activity implements MainFragment.OnFragmentInteractionListener, LegendFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener{
 
     private float Taxes, Profit, Capital, Fees;
     private SharedPreferences sharedPreferences;
@@ -39,22 +39,24 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
         Capital = sharedPreferences.getFloat(PREF_CAP, 10);
         Fees = sharedPreferences.getFloat(PREF_FEE, 20);
         System.out.print("Successfully loaded sharedPreferences from memory");
-        PriceCodeDictionary.add("Q");
+        PriceCodeDictionary.add("P");
+        PriceCodeDictionary.add("O");
+        PriceCodeDictionary.add("S");
+        PriceCodeDictionary.add("H");
         PriceCodeDictionary.add("U");
-        PriceCodeDictionary.add("I");
+        PriceCodeDictionary.add("L");
+        PriceCodeDictionary.add("A");
         PriceCodeDictionary.add("T");
-        PriceCodeDictionary.add("J");
-        PriceCodeDictionary.add("O");
-        PriceCodeDictionary.add("B");
-        PriceCodeDictionary.add("N");
-        PriceCodeDictionary.add("O");
-        PriceCodeDictionary.add("W");
+        PriceCodeDictionary.add("E");
+        PriceCodeDictionary.add("R");
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setActionBar(toolbar);
 
-        loadMainFragment();
+//        loadMainFragment();
+//        loadNextFragment(LegendFragment.newInstance(PriceCodeDictionary));
+        loadNextFragment(SettingsFragment.newInstance(Taxes, Profit, Capital, Fees));
     }
 
     @SuppressLint("ResourceType")
