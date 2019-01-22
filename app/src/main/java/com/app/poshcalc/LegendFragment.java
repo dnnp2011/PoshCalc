@@ -3,7 +3,7 @@ package com.app.poshcalc;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +25,7 @@ public class LegendFragment extends Fragment {
     private static final String ARG_DICT = "dictionary";
 
     private ArrayList<String> priceCodeDictionary;
-    private TextView letter0, letter1, letter2, letter3, letter4, letter5, letter6, letter7, letter8, letter9, letter10;
+    private TextView letter0, letter1, letter2, letter3, letter4, letter5, letter6, letter7, letter8, letter9;
 
     private OnFragmentInteractionListener mListener;
 
@@ -102,7 +102,7 @@ public class LegendFragment extends Fragment {
         }
         else {
             throw new RuntimeException(context.toString()
-                                       + " must implement OnFragmentInteractionListener");
+                                       + " must implement OnSettingsInteractionListener");
         }
     }
 

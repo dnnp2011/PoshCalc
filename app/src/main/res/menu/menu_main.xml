@@ -2,8 +2,22 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.app.poshcalc.MainActivity">
-    <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
-          android:orderInCategory="100"
-          app:showAsAction="never"/>
+    <item
+            android:id="@+id/action_calculate"
+            android:title="@string/calculate"
+            android:orderInCategory="100"
+            app:showAsAction="never"
+            android:icon="@drawable/ic_memory_icon"/>
+    <item
+            android:id="@+id/action_legend"
+            android:title="@string/conversion_chart"
+            android:orderInCategory="100"
+            app:showAsAction="never"
+            android:icon="@drawable/ic_search_icon"/>
+    <item
+            android:id="@+id/action_settings"
+            android:title="@string/action_settings"
+            android:orderInCategory="100"
+            app:showAsAction="never"
+            android:icon="@drawable/ic_settings_icon"/>
 </menu>

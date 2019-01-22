@@ -3,7 +3,8 @@ package com.app.poshcalc;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +30,11 @@ public class MainFragment extends Fragment {
     private static final String ARG_CAP = "capital";
     private static final String ARG_FEE = "fees";
     private static final String ARG_DICT = "dictionary";
+    private static final String ARG_PAGE_NUM = "page";
 
     // TODO: Rename and change types of parameters
     private float tax, profit, capital, fees;
+    private int page;
     private ArrayList<String> priceCodeDictionary;
     private Button calculateButton;
     private TextView purchasePriceView, minPriceView, targetPriceView, priceCodeView;
@@ -59,6 +62,7 @@ public class MainFragment extends Fragment {
         args.putFloat(ARG_CAP, _capital);
         args.putFloat(ARG_FEE, _fees);
         args.putStringArrayList(ARG_DICT, _priceCodeDictionary);
+        args.putInt(ARG_PAGE_NUM, 0);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,6 +76,7 @@ public class MainFragment extends Fragment {
             capital = getArguments().getFloat(ARG_CAP);
             fees = getArguments().getFloat(ARG_FEE) / 100;
             priceCodeDictionary = getArguments().getStringArrayList(ARG_DICT);
+            page = getArguments().getInt(ARG_PAGE_NUM);
         }
     }
 
@@ -151,7 +156,7 @@ public class MainFragment extends Fragment {
         }
         else {
             throw new RuntimeException(context.toString()
-                                       + " must implement OnFragmentInteractionListener");
+                                       + " must implement OnSettingsInteractionListener");
         }
     }
 

@@ -300,6 +300,10 @@
             android:scaleY="3"
             android:padding="3dp"
             android:src="@drawable/save_button"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:focusedByDefault="false"
+            android:focusableInTouchMode="false"
+            android:defaultFocusHighlightEnabled="false"
+            android:screenReaderFocusable="false"/>
 
 </android.support.constraint.ConstraintLayout>

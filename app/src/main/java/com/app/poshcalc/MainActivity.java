@@ -1,35 +1,49 @@
 package com.app.poshcalc;
 
-import android.annotation.SuppressLint;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.app.Activity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-//import android.support.v4.app.FragmentManager;
-//import android.app.FragmentManager;
-import android.app.Activity;
-//import android.support.v7.app.AppCompatActivity;
-//import android.widget.Toolbar;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
-public class MainActivity extends Activity implements MainFragment.OnFragmentInteractionListener, LegendFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener{
+public class MainActivity extends FragmentActivity implements MainFragment.OnFragmentInteractionListener, LegendFragment.OnFragmentInteractionListener, SettingsFragment.OnSettingsInteractionListener {
+
+//    TODO: Add slide gesture and animations for moving between fragments
+//    TODO: Add animations for menu item navigation
+//    TODO: Temporarily store calculate view state for popping backstack (until app close)
+//    TODO: Add calculate results enter and exit animations
+//    TODO: Add isEmpty check for all inputs. Alert if empty.
+//    TODO: Hitting enter on calculate pag keyboard auto clicks calculate button
+//    TODO: Fine tune settings page calculation
+//    TODO: Fix empty activity on backstack
+//    TODO: Add vector animation for sell price range
 
     private float Taxes, Profit, Capital, Fees;
     private SharedPreferences sharedPreferences;
 
+    private CoordinatorLayout coordinatorLayout;
     private static final String PREF_TAX = "tax";
     private static final String PREF_PROF = "profit";
     private static final String PREF_CAP = "capital";
     private static final String PREF_FEE = "fees";
 
-    ArrayList<String> PriceCodeDictionary = new ArrayList<>(10);
+    private ArrayList<String> PriceCodeDictionary = new ArrayList<>(10);
+    private ViewPager viewPager;
+
+    public static Fragment mainFragment, legendFragment, settingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +68,23 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setActionBar(toolbar);
+        coordinatorLayout = findViewById(R.id.rootCoordinatorLayout);
+
+        mainFragment = MainFragment.newInstance(Taxes, Profit, Capital, Fees, PriceCodeDictionary);
+        legendFragment = LegendFragment.newInstance(PriceCodeDictionary);
+        settingsFragment = SettingsFragment.newInstance(Taxes, Profit, Capital, Fees);
+
+        viewPager = findViewById(R.id.fragmentContainer);
+        viewPager.setOffscreenPageLimit(1);
+        SwipeAdapter swipeAdapter = new SwipeAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(swipeAdapter);
+        viewPager.setCurrentItem(1);
 
 //        loadMainFragment();
-//        loadNextFragment(LegendFragment.newInstance(PriceCodeDictionary));
-        loadNextFragment(SettingsFragment.newInstance(Taxes, Profit, Capital, Fees));
     }
 
-    @SuppressLint("ResourceType")
     private void loadMainFragment() {
-        FragmentManager manager = getFragmentManager();
+        FragmentManager manager = getSupportFragmentManager();
         MainFragment mainFragment = (MainFragment) manager.findFragmentById(R.id.fragmentContainer);
 
         if (mainFragment == null) {
@@ -73,21 +95,23 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
         }
     }
 
-    public void loadNextFragment(Fragment fragment) {
-        FragmentManager manager = getFragmentManager();
-        manager.beginTransaction()
-               .addToBackStack(null)
-               .replace(R.id.fragmentContainer, fragment)
-               .commit();
+    public void showSnackbar() {
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Settings saved", Snackbar.LENGTH_SHORT);
+
+        TextView text = snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        snackbar.getView().setBackgroundColor(getColor(R.color.colorPrimaryDark));
+        text.setTextColor(getColor(R.color.colorAccent));
+        text.setGravity(Gravity.CENTER);
+        text.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_check_circle_orange_24dp), null);
+        snackbar.show();
     }
 
-    public void saveUserPreferences(float _tax, float _profit, float _capital, float _fees) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putFloat(PREF_TAX, _tax);
-        editor.putFloat(PREF_PROF, _profit);
-        editor.putFloat(PREF_CAP, _capital);
-        editor.putFloat(PREF_FEE, _fees);
-        editor.commit();
+    public void loadNextFragment(Fragment fragment) {
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction()
+               .addToBackStack(String.valueOf(fragment.getId()))
+               .replace(R.id.fragmentContainer, fragment)
+               .commit();
     }
 
     public static float roundToScale(float number, int scale) {
@@ -95,21 +119,58 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
         for (int i = 1; i < scale; i++)
             pow *= 10;
         float tmp = number * pow;
-        return ( (float) ( (int) ((tmp - (int) tmp) >= 0.5f ? tmp + 1 : tmp) ) ) / pow;
+        return ((float) ((int) ((tmp - (int) tmp) >= 0.5f ? tmp + 1 : tmp))) / pow;
     }
 
     private void updatePreferences() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putFloat(PREF_TAX, Taxes);
-        editor.putFloat(PREF_PROF, Taxes);
-        editor.putFloat(PREF_CAP, Taxes);
-        editor.putFloat(PREF_TAX, Taxes);
+        editor.putFloat(PREF_PROF, Profit);
+        editor.putFloat(PREF_CAP, Capital);
+        editor.putFloat(PREF_FEE, Fees);
+        editor.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (viewPager.getCurrentItem() == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed();
+        } else {
+            // Otherwise, select the previous step.
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem mainMenu = menu.getItem(0);
+        MenuItem legendMenu = menu.getItem(1);
+        legendMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                viewPager.setCurrentItem(0);
+                return true;
+            }
+        });
+        mainMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                viewPager.setCurrentItem(1);
+                return true;
+            }
+        });
+        MenuItem settingsMenu = menu.getItem(2);
+        settingsMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                viewPager.setCurrentItem(2);
+                return true;
+            }
+        });
         return true;
     }
 
@@ -139,5 +200,7 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
         Profit = _profit;
         Capital = _capital;
         Fees = _fees;
+        updatePreferences();
+        showSnackbar();
     }
 }
