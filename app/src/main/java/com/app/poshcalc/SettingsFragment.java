@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 
@@ -27,7 +28,7 @@ public class SettingsFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private float tax, profit, capital, fees;
-    private Button save;
+    private ImageButton saveButton;
     private TextView taxView, profitView, capitalView, feeView;
 
     private SettingsFragment.OnFragmentInteractionListener mListener;
@@ -72,16 +73,20 @@ public class SettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-
+        taxView = (TextView) view.findViewById(R.id.taxView);
+        profitView = (TextView) view.findViewById(R.id.profitView);
+        capitalView = (TextView) view.findViewById(R.id.capitalView);
+        feeView = (TextView) view.findViewById(R.id.feeView);
+        saveButton = (ImageButton) view.findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //save settings to user pref
+                //show snackbar notification that pref are saved
+            }
+        });
 
         return view;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -113,7 +118,6 @@ public class SettingsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onSettingsSaved(float taxes, float profit, float capital, float fees);
     }
 }

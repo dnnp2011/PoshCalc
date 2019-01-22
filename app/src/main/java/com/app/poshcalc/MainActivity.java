@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.support.v4.app.FragmentManager;
@@ -97,6 +98,14 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
         return ( (float) ( (int) ((tmp - (int) tmp) >= 0.5f ? tmp + 1 : tmp) ) ) / pow;
     }
 
+    private void updatePreferences() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putFloat(PREF_TAX, Taxes);
+        editor.putFloat(PREF_PROF, Taxes);
+        editor.putFloat(PREF_CAP, Taxes);
+        editor.putFloat(PREF_TAX, Taxes);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -122,5 +131,13 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void onSettingsSaved(float _taxes, float _profit, float _capital, float _fees) {
+        Taxes = _taxes;
+        Profit = _profit;
+        Capital = _capital;
+        Fees = _fees;
     }
 }
