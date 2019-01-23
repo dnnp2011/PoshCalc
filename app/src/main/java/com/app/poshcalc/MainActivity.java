@@ -43,7 +43,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
     private static final String ARG_FEE = "fees";
 
 
-    private ArrayList<String> PriceCodeDictionary = new ArrayList<>(10);
+    private ArrayList<String> PriceCodeDictionary;
     private ViewPager viewPager;
 
     public static Fragment mainFragment, legendFragment, settingsFragment;
@@ -57,6 +57,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         Capital = sharedPreferences.getFloat(PREF_CAP, 10);
         Fees = sharedPreferences.getFloat(PREF_FEE, 20);
         System.out.print("Successfully loaded sharedPreferences from memory");
+        PriceCodeDictionary = new ArrayList<>();
         PriceCodeDictionary.add("P");
         PriceCodeDictionary.add("O");
         PriceCodeDictionary.add("S");
@@ -78,8 +79,32 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         settingsFragment = SettingsFragment.newInstance(Taxes, Profit, Capital, Fees);
 
         viewPager = findViewById(R.id.fragmentContainer);
-        viewPager.setOffscreenPageLimit(1);
-        SwipeAdapter swipeAdapter = new SwipeAdapter(getSupportFragmentManager());
+        viewPager.setOffscreenPageLimit(0);
+        final SwipeAdapter swipeAdapter = new SwipeAdapter(getSupportFragmentManager());
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            int currentPosition = 0;
+
+            @Override
+            public void onPageSelected(int newPosition) {
+                SwipeAdapter.FragmentLifecycle fragmentToShow = (SwipeAdapter.FragmentLifecycle)swipeAdapter.getItem(newPosition);
+                fragmentToShow.onResumeFragment();
+
+                SwipeAdapter.FragmentLifecycle fragmentToHide = (SwipeAdapter.FragmentLifecycle)swipeAdapter.getItem(currentPosition);
+                fragmentToHide.onPauseFragment();
+
+                currentPosition = newPosition;
+            }
+
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
         viewPager.setAdapter(swipeAdapter);
         viewPager.setCurrentItem(1);
     }
@@ -89,7 +114,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
 
         TextView text = snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
         snackbar.getView().setBackgroundColor(getColor(R.color.colorPrimaryDark));
-        text.setTextColor(getColor(R.color.colorAccent));
+        text.setTextColor(getColor(R.color.colorPrimary));
         text.setGravity(Gravity.CENTER);
         text.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_check_circle_orange_24dp), null);
         snackbar.show();

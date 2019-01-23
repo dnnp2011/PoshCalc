@@ -27,4 +27,9 @@ public class SwipeAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return 3;
     }
+
+    public interface FragmentLifecycle {
+        public void onPauseFragment();
+        public void onResumeFragment();
+    }
 }

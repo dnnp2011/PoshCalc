@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class LegendFragment extends Fragment {
+public class LegendFragment extends Fragment implements SwipeAdapter.FragmentLifecycle {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_DICT = "dictionary";
@@ -87,6 +87,16 @@ public class LegendFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onPauseFragment() {
+
+    }
+
+    @Override
+    public void onResumeFragment() {
+
     }
 
     public interface OnFragmentInteractionListener {

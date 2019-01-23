@@ -79,7 +79,13 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/space"
                     android:autofillHints="Enter your local income tax rate"
-                    android:gravity="center_horizontal"/>
+                    android:gravity="center_horizontal"
+                    android:backgroundTint="@color/colorAccent"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:foregroundTintMode="src_atop"
+                    android:drawableTintMode="src_atop"/>
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>
@@ -143,7 +149,11 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/space"
                     android:autofillHints="Enter re-investment capital target"
-                    android:gravity="center_horizontal"/>
+                    android:gravity="center_horizontal"
+                    android:backgroundTint="@color/colorAccent"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:minLines="1"/>
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>
@@ -207,7 +217,11 @@
                     app:layout_constraintStart_toEndOf="@+id/space"
                     android:ems="5"
                     android:autofillHints="Enter sales profit target"
-                    android:gravity="center_horizontal"/>
+                    android:gravity="center_horizontal"
+                    android:backgroundTint="@color/colorAccent"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:minLines="1"/>
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>
@@ -271,7 +285,11 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/space"
                     android:autofillHints="Enter service fee percentage"
-                    android:gravity="center_horizontal"/>
+                    android:gravity="center_horizontal"
+                    android:backgroundTint="@color/colorAccent"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:minLines="1"/>
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>

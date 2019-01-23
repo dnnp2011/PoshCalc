@@ -18,7 +18,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements SwipeAdapter.FragmentLifecycle {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_TAX = "tax";
@@ -26,12 +26,14 @@ public class MainFragment extends Fragment {
     private static final String ARG_CAP = "capital";
     private static final String ARG_FEE = "fees";
     private static final String ARG_DICT = "dictionary";
+    private static final String ARG_MIN_PROF_SUM = "minimum profit sum";
+    private static final String ARG_TAR_PROF_SUM = "target profit sum";
 
     // TODO: Rename and change types of parameters
     private float tax, profit, capital, fees;
     private ArrayList<String> priceCodeDictionary;
     private Button calculateButton;
-    private TextView purchasePriceView, minPriceView, targetPriceView, priceCodeView;
+    private TextView purchasePriceView, minPriceView, targetPriceView, priceCodeView, minProfitSumView, targetProfitSumView;
     private CardView resultsCardViewLayout;
 
     private OnFragmentInteractionListener mListener;
@@ -78,7 +80,7 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        purchasePriceView = (TextView) view.findViewById(R.id.purchasePriceInput);
+        purchasePriceView = view.findViewById(R.id.purchasePriceInput);
         purchasePriceView.setImeActionLabel("Calculate", EditorInfo.IME_ACTION_DONE);
         purchasePriceView.clearFocus();
         purchasePriceView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -88,37 +90,51 @@ public class MainFragment extends Fragment {
                                                                                                                                                 && event.getAction() == KeyEvent.ACTION_DOWN) {
                     MainActivity.hideSoftKeyboard(getActivity());
                     v.clearFocus();
-                    onClickCalculate();
+                    try {
+                        onClickCalculate();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 return true;
             }
         });
-        minPriceView = (TextView) view.findViewById(R.id.minSellPriceView);
-        targetPriceView = (TextView) view.findViewById(R.id.targetSellPriceView);
-        priceCodeView = (TextView) view.findViewById(R.id.priceCodeView);
-        resultsCardViewLayout = (CardView) view.findViewById(R.id.resultsCardViewLayout);
-        resultsCardViewLayout.setAlpha(0f);
+        minPriceView = view.findViewById(R.id.minSellPriceView);
+        targetPriceView = view.findViewById(R.id.targetSellPriceView);
+        minProfitSumView = view.findViewById(R.id.minProfitSum);
+        targetProfitSumView = view.findViewById(R.id.targetProfitSum);
+        priceCodeView = view.findViewById(R.id.priceCodeView);
+        resultsCardViewLayout = view.findViewById(R.id.resultsCardViewLayout);
+        resultsCardViewLayout.setVisibility(View.GONE);
+        minProfitSumView.setText("+$1");
+//        targetProfitSumView.setText("+$" + String.valueOf(profit + capital));
 
         calculateButton = view.findViewById(R.id.calculateButton);
         calculateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                onClickCalculate();
+                try {
+                    onClickCalculate();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
         return view;
     }
 
-    private void onClickCalculate() {
+    private void onClickCalculate() throws Exception {
         if (TextUtils.isEmpty(purchasePriceView.getText())) {
             Toast.makeText(getContext(), "You didn't enter a purchase price", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        tax = getArguments().getFloat(ARG_TAX) / 100;
-        profit = getArguments().getFloat(ARG_PROF);
-        capital = getArguments().getFloat(ARG_CAP);
-        fees = getArguments().getFloat(ARG_FEE) / 100;
+        Bundle args = getArguments();
+        if (args == null) {
+            throw new Exception("Missing MainFragment calculation variables");
+        }
 
         float purchasePrice = Float.parseFloat(purchasePriceView.getText().toString());
         float minPrice = MainActivity.roundToScale(getMinSellPrice(purchasePrice), 2);
@@ -126,24 +142,26 @@ public class MainFragment extends Fragment {
         String priceCode = getItemPriceCode(minPrice, targetPrice);
         minPriceView.setText(String.valueOf(minPrice));
         targetPriceView.setText(String.valueOf(targetPrice));
+        minProfitSumView.setText("+$1");
+        targetProfitSumView.setText("+$" + String.valueOf(profit + capital));
         priceCodeView.setText(priceCode);
 
-//                resultsCardViewLayout.setVisibility(View.VISIBLE);
-        resultsCardViewLayout.setTranslationY(resultsCardViewLayout.getHeight());
+        resultsCardViewLayout.setVisibility(View.VISIBLE);
+/*        resultsCardViewLayout.setTranslationY(resultsCardViewLayout.getHeight());
         resultsCardViewLayout.animate()
                              .translationY(0)
                              .alpha(1f)
-                             .setDuration(300);
+                             .setDuration(300);*/
     }
 
     private float getTargetSellPrice(float pPrice) {
         float pTax = (profit + capital) * tax;
-        float pFee = (pPrice + profit + capital + pTax) * fees;
+        float pFee = pPrice < 15 ? 3.75f + pPrice + profit + capital + pTax : (pPrice + profit + capital + pTax) * fees;
         return pPrice + profit + capital + pTax + pFee;
     }
 
     private float getMinSellPrice(float pPrice) {
-        float pFee = pPrice * fees;
+        float pFee = pPrice < 15 ? 3.75f : pPrice * fees;
         return pPrice + pFee + 1;
     }
 
@@ -188,6 +206,35 @@ public class MainFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onPauseFragment() {
+
+    }
+
+    @Override
+    public void onResumeFragment() {
+        Bundle args = getArguments();
+        if (args == null || purchasePriceView == null) return;
+
+        tax = args.getFloat(ARG_TAX) / 100;
+        profit = args.getFloat(ARG_PROF);
+        capital = args.getFloat(ARG_CAP);
+        fees = args.getFloat(ARG_FEE) / 100;
+
+        if (TextUtils.isEmpty(purchasePriceView.getText())) {
+            return;
+        }
+        float purchasePrice = Float.parseFloat(purchasePriceView.getText().toString());
+        float minPrice = MainActivity.roundToScale(getMinSellPrice(purchasePrice), 2);
+        float targetPrice = MainActivity.roundToScale(getTargetSellPrice(purchasePrice), 2);
+        String priceCode = getItemPriceCode(minPrice, targetPrice);
+        minPriceView.setText(String.valueOf(minPrice));
+        targetPriceView.setText(String.valueOf(targetPrice));
+        minProfitSumView.setText("+$1");
+        targetProfitSumView.setText("+$" + String.valueOf(profit + capital));
+        priceCodeView.setText(priceCode);
     }
 
     public interface OnFragmentInteractionListener {

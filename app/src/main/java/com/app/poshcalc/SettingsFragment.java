@@ -21,11 +21,13 @@ import android.widget.Toast;
  * Use the {@link SettingsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements SwipeAdapter.FragmentLifecycle {
     private static final String ARG_TAX = "tax";
     private static final String ARG_PROF = "profit";
     private static final String ARG_CAP = "capital";
     private static final String ARG_FEE = "fees";
+    private static final String ARG_MIN_PROF_SUM = "minimum profit sum";
+    private static final String ARG_TAR_PROF_SUM = "target profit sum";
 
     // TODO: Rename and change types of parameters
     private float tax, profit, capital, fees;
@@ -58,13 +60,19 @@ public class SettingsFragment extends Fragment {
     }
 
     @Override
+    public void onAttachFragment(Fragment childFragment) {
+        super.onAttachFragment(childFragment);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
         if (getArguments() != null) {
-            tax = getArguments().getFloat(ARG_TAX) / 100;
-            profit = getArguments().getFloat(ARG_PROF);
-            capital = getArguments().getFloat(ARG_CAP);
-            fees = getArguments().getFloat(ARG_FEE) / 100;
+            tax = args.getFloat(ARG_TAX) / 100;
+            profit = args.getFloat(ARG_PROF);
+            capital = args.getFloat(ARG_CAP);
+            fees = args.getFloat(ARG_FEE) / 100;
         }
     }
 
@@ -74,16 +82,16 @@ public class SettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        taxView = (TextView) view.findViewById(R.id.taxView);
-        profitView = (TextView) view.findViewById(R.id.profitView);
-        capitalView = (TextView) view.findViewById(R.id.capitalView);
-        feeView = (TextView) view.findViewById(R.id.feeView);
+        taxView = view.findViewById(R.id.taxView);
+        profitView = view.findViewById(R.id.profitView);
+        capitalView = view.findViewById(R.id.capitalView);
+        feeView = view.findViewById(R.id.feeView);
         taxView.setText(String.valueOf(Math.round(tax * 100)));
         profitView.setText(String.valueOf(Math.round(profit)));
         capitalView.setText(String.valueOf(Math.round(capital)));
         feeView.setText(String.valueOf(Math.round(fees * 100)));
 
-        saveButton = (ImageButton) view.findViewById(R.id.saveButton);
+        saveButton = view.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,16 +132,28 @@ public class SettingsFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    @Override
+    public void onPauseFragment() {
+
+    }
+
+    @Override
+    public void onResumeFragment() {
+        if (taxView == null) return;
+
+        Bundle args = getArguments();
+        if (getArguments() != null) {
+            tax = args.getFloat(ARG_TAX) / 100;
+            profit = args.getFloat(ARG_PROF);
+            capital = args.getFloat(ARG_CAP);
+            fees = args.getFloat(ARG_FEE) / 100;
+        }
+        taxView.setText(String.valueOf(Math.round(tax * 100)));
+        profitView.setText(String.valueOf(Math.round(profit)));
+        capitalView.setText(String.valueOf(Math.round(capital)));
+        feeView.setText(String.valueOf(Math.round(fees * 100)));
+    }
+
     public interface OnSettingsInteractionListener {
         void onSettingsSaved(float taxes, float profit, float capital, float fees);
     }
