@@ -4,24 +4,20 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MainFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MainFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MainFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,11 +26,9 @@ public class MainFragment extends Fragment {
     private static final String ARG_CAP = "capital";
     private static final String ARG_FEE = "fees";
     private static final String ARG_DICT = "dictionary";
-    private static final String ARG_PAGE_NUM = "page";
 
     // TODO: Rename and change types of parameters
     private float tax, profit, capital, fees;
-    private int page;
     private ArrayList<String> priceCodeDictionary;
     private Button calculateButton;
     private TextView purchasePriceView, minPriceView, targetPriceView, priceCodeView;
@@ -47,10 +41,10 @@ public class MainFragment extends Fragment {
     }
 
     /**
-     * @param _tax The user's local tax rate to be paid on sales profit.
-     * @param _profit The desired profit from each item.
+     * @param _tax     The user's local tax rate to be paid on sales profit.
+     * @param _profit  The desired profit from each item.
      * @param _capital The desired re-investment capital from each item.
-     * @param _fees Service fees associated with the selling platform.
+     * @param _fees    Service fees associated with the selling platform.
      * @return A new instance of fragment MainFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -62,7 +56,6 @@ public class MainFragment extends Fragment {
         args.putFloat(ARG_CAP, _capital);
         args.putFloat(ARG_FEE, _fees);
         args.putStringArrayList(ARG_DICT, _priceCodeDictionary);
-        args.putInt(ARG_PAGE_NUM, 0);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,7 +69,6 @@ public class MainFragment extends Fragment {
             capital = getArguments().getFloat(ARG_CAP);
             fees = getArguments().getFloat(ARG_FEE) / 100;
             priceCodeDictionary = getArguments().getStringArrayList(ARG_DICT);
-            page = getArguments().getInt(ARG_PAGE_NUM);
         }
     }
 
@@ -84,32 +76,64 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         purchasePriceView = (TextView) view.findViewById(R.id.purchasePriceInput);
+        purchasePriceView.setImeActionLabel("Calculate", EditorInfo.IME_ACTION_DONE);
+        purchasePriceView.clearFocus();
+        purchasePriceView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_SEND
+                                                                                                                                                && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    MainActivity.hideSoftKeyboard(getActivity());
+                    v.clearFocus();
+                    onClickCalculate();
+                }
+                return true;
+            }
+        });
         minPriceView = (TextView) view.findViewById(R.id.minSellPriceView);
         targetPriceView = (TextView) view.findViewById(R.id.targetSellPriceView);
         priceCodeView = (TextView) view.findViewById(R.id.priceCodeView);
         resultsCardViewLayout = (CardView) view.findViewById(R.id.resultsCardViewLayout);
-        resultsCardViewLayout.setVisibility(View.GONE);
+        resultsCardViewLayout.setAlpha(0f);
 
         calculateButton = view.findViewById(R.id.calculateButton);
         calculateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                float purchasePrice = Float.parseFloat(purchasePriceView.getText().toString());
-                float minPrice = MainActivity.roundToScale(getMinSellPrice(purchasePrice), 2);
-                float targetPrice = MainActivity.roundToScale(getTargetSellPrice(purchasePrice), 2);
-                String priceCode = getItemPriceCode(minPrice, targetPrice);
-                minPriceView.setText(String.valueOf(minPrice));
-                targetPriceView.setText(String.valueOf(targetPrice));
-                priceCodeView.setText(priceCode);
-
-//                TODO: Create fade in animation for results CardView
-                resultsCardViewLayout.setVisibility(View.VISIBLE);
+                onClickCalculate();
             }
         });
 
         return view;
+    }
+
+    private void onClickCalculate() {
+        if (TextUtils.isEmpty(purchasePriceView.getText())) {
+            Toast.makeText(getContext(), "You didn't enter a purchase price", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        tax = getArguments().getFloat(ARG_TAX) / 100;
+        profit = getArguments().getFloat(ARG_PROF);
+        capital = getArguments().getFloat(ARG_CAP);
+        fees = getArguments().getFloat(ARG_FEE) / 100;
+
+        float purchasePrice = Float.parseFloat(purchasePriceView.getText().toString());
+        float minPrice = MainActivity.roundToScale(getMinSellPrice(purchasePrice), 2);
+        float targetPrice = MainActivity.roundToScale(getTargetSellPrice(purchasePrice), 2);
+        String priceCode = getItemPriceCode(minPrice, targetPrice);
+        minPriceView.setText(String.valueOf(minPrice));
+        targetPriceView.setText(String.valueOf(targetPrice));
+        priceCodeView.setText(priceCode);
+
+//                resultsCardViewLayout.setVisibility(View.VISIBLE);
+        resultsCardViewLayout.setTranslationY(resultsCardViewLayout.getHeight());
+        resultsCardViewLayout.animate()
+                             .translationY(0)
+                             .alpha(1f)
+                             .setDuration(300);
     }
 
     private float getTargetSellPrice(float pPrice) {
@@ -119,8 +143,8 @@ public class MainFragment extends Fragment {
     }
 
     private float getMinSellPrice(float pPrice) {
-        float pFee = (pPrice + 1) * fees;
-        return pPrice + pFee;
+        float pFee = pPrice * fees;
+        return pPrice + pFee + 1;
     }
 
     private String getItemPriceCode(float mPrice, float tPrice) {
@@ -143,7 +167,7 @@ public class MainFragment extends Fragment {
 
         if (mPriceDigits.length + tPriceDigits.length != (priceCode.length() - 3)) {
             throw new RuntimeException(getContext().toString()
-               + " getItemPriceCode() length of price code does not equal the length of the input");
+                                       + " getItemPriceCode() length of price code does not equal the length of the input");
         }
         return priceCode.toString();
     }
@@ -166,16 +190,6 @@ public class MainFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

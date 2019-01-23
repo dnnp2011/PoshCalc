@@ -12,7 +12,7 @@
     <string name="projected_sell_price">Projected Sell Price</string>
     <string name="price_code_chart">Price Code Chart:</string>
     <string name="taxes">Taxes (%)</string>
-    <string name="priceEquation">$Price = $Purchase + $Profit + $Capital + %Tax + %Fees</string>
+    <string name="priceEquation">%Fees + ($Purchase + (%Taxes + ($Profit + $Capital)))</string>
     <string name="fees">Fees (%)</string>
     <string name="capital">Capital ($)</string>
     <string name="profit">Profit ($)</string>

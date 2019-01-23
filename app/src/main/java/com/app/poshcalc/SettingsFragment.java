@@ -4,11 +4,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -85,8 +87,11 @@ public class SettingsFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //save settings to user pref
-                //show snackbar notification that pref are saved
+                if (TextUtils.isEmpty(taxView.getText()) || TextUtils.isEmpty(profitView.getText()) || TextUtils.isEmpty(capitalView.getText()) || TextUtils.isEmpty(feeView.getText())) {
+                    Toast.makeText(getContext(), "Please fill all fields before saving", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 float vTax = Float.parseFloat(taxView.getText().toString());
                 float vProfit = Float.parseFloat(profitView.getText().toString());
                 float vCapital = Float.parseFloat(capitalView.getText().toString());
@@ -96,6 +101,8 @@ public class SettingsFragment extends Fragment {
             }
         });
 
+        if (getActivity().getCurrentFocus() != null)
+            getActivity().getCurrentFocus().clearFocus();
         return view;
     }
 

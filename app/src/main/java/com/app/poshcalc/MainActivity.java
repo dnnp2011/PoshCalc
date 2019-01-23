@@ -1,6 +1,8 @@
 package com.app.poshcalc;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Rect;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -11,25 +13,21 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
+import android.view.*;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends FragmentActivity implements MainFragment.OnFragmentInteractionListener, LegendFragment.OnFragmentInteractionListener, SettingsFragment.OnSettingsInteractionListener {
+public class MainActivity extends FragmentActivity implements MainFragment.OnFragmentInteractionListener, SettingsFragment.OnSettingsInteractionListener, LegendFragment.OnFragmentInteractionListener {
 
-//    TODO: Add slide gesture and animations for moving between fragments
-//    TODO: Add animations for menu item navigation
-//    TODO: Temporarily store calculate view state for popping backstack (until app close)
-//    TODO: Add calculate results enter and exit animations
-//    TODO: Add isEmpty check for all inputs. Alert if empty.
-//    TODO: Hitting enter on calculate pag keyboard auto clicks calculate button
 //    TODO: Fine tune settings page calculation
-//    TODO: Fix empty activity on backstack
 //    TODO: Add vector animation for sell price range
+//    TODO: Add app icon
 
     private float Taxes, Profit, Capital, Fees;
     private SharedPreferences sharedPreferences;
@@ -39,6 +37,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
     private static final String PREF_PROF = "profit";
     private static final String PREF_CAP = "capital";
     private static final String PREF_FEE = "fees";
+    private static final String ARG_TAX = "tax";
+    private static final String ARG_PROF = "profit";
+    private static final String ARG_CAP = "capital";
+    private static final String ARG_FEE = "fees";
+
 
     private ArrayList<String> PriceCodeDictionary = new ArrayList<>(10);
     private ViewPager viewPager;
@@ -79,20 +82,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         SwipeAdapter swipeAdapter = new SwipeAdapter(getSupportFragmentManager());
         viewPager.setAdapter(swipeAdapter);
         viewPager.setCurrentItem(1);
-
-//        loadMainFragment();
-    }
-
-    private void loadMainFragment() {
-        FragmentManager manager = getSupportFragmentManager();
-        MainFragment mainFragment = (MainFragment) manager.findFragmentById(R.id.fragmentContainer);
-
-        if (mainFragment == null) {
-            mainFragment = MainFragment.newInstance(Taxes, Profit, Capital, Fees, PriceCodeDictionary);
-            manager.beginTransaction()
-                   .add(R.id.fragmentContainer, mainFragment)
-                   .commit();
-        }
     }
 
     public void showSnackbar() {
@@ -106,20 +95,24 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         snackbar.show();
     }
 
-    public void loadNextFragment(Fragment fragment) {
-        FragmentManager manager = getSupportFragmentManager();
-        manager.beginTransaction()
-               .addToBackStack(String.valueOf(fragment.getId()))
-               .replace(R.id.fragmentContainer, fragment)
-               .commit();
-    }
-
     public static float roundToScale(float number, int scale) {
         int pow = 10;
         for (int i = 1; i < scale; i++)
             pow *= 10;
         float tmp = number * pow;
-        return ((float) ((int) ((tmp - (int) tmp) >= 0.5f ? tmp + 1 : tmp))) / pow;
+//        return ((float) ((int) ((tmp - (int) tmp) >= 0.5f ? tmp + 1 : tmp))) / pow;
+        return ((float) ((int) (Math.ceil((double) tmp)))) / pow;
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        try {
+            InputMethodManager inputMethodManager =
+                    (InputMethodManager) activity.getSystemService(
+                            Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(
+                    activity.getCurrentFocus().getWindowToken(), 0);
+        }
+        catch (Exception e) { }
     }
 
     private void updatePreferences() {
@@ -129,6 +122,27 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         editor.putFloat(PREF_CAP, Capital);
         editor.putFloat(PREF_FEE, Fees);
         editor.commit();
+    }
+
+    /*
+     * De-focus EditText on touch event
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    Log.d("focus", "touchevent");
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
     }
 
     @Override
@@ -201,6 +215,14 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         Capital = _capital;
         Fees = _fees;
         updatePreferences();
+        Bundle args = new Bundle();
+        args.putFloat(ARG_TAX, _taxes);
+        args.putFloat(ARG_PROF, _profit);
+        args.putFloat(ARG_CAP, _capital);
+        args.putFloat(ARG_FEE, _fees);
+        mainFragment.setArguments(args);
+        settingsFragment.setArguments(args);
+
         showSnackbar();
     }
 }
