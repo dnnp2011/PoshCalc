@@ -4,10 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,8 +21,9 @@ public class LegendFragment extends Fragment implements SwipeAdapter.FragmentLif
 
     private ArrayList<String> priceCodeDictionary;
     private TextView letter0, letter1, letter2, letter3, letter4, letter5, letter6, letter7, letter8, letter9;
+    private Button updateButton;
 
-    private OnFragmentInteractionListener mListener;
+    private OnLegendFragmentInteractionListener mListener;
 
     public LegendFragment() {
         // Required empty public constructor
@@ -68,14 +72,58 @@ public class LegendFragment extends Fragment implements SwipeAdapter.FragmentLif
         letter9 = view.findViewById(R.id.letter9);
         letter9.setText(priceCodeDictionary.get(9));
 
+        updateButton = view.findViewById(R.id.updateLegendButton);
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(letter0.getText()) || TextUtils.isEmpty(letter1.getText()) || TextUtils.isEmpty(letter2.getText()) || TextUtils.isEmpty(letter3.getText()) || TextUtils.isEmpty(letter4.getText())
+                    || TextUtils.isEmpty(letter5.getText()) || TextUtils.isEmpty(letter6.getText()) || TextUtils.isEmpty(letter7.getText()) || TextUtils.isEmpty(letter8.getText()) || TextUtils.isEmpty(letter9.getText())) {
+                    Toast.makeText(getContext(), "You cannot leave empty fields", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (TextUtils.isDigitsOnly(letter0.getText()) || TextUtils.isDigitsOnly(letter1.getText()) || TextUtils.isDigitsOnly(letter2.getText())  || TextUtils.isDigitsOnly(letter3.getText())  || TextUtils.isDigitsOnly(letter4.getText())
+                    || TextUtils.isDigitsOnly(letter5.getText()) || TextUtils.isDigitsOnly(letter6.getText()) || TextUtils.isDigitsOnly(letter7.getText()) || TextUtils.isDigitsOnly(letter8.getText()) || TextUtils.isDigitsOnly(letter9.getText())) {
+                    Toast.makeText(getContext(), "Values must be letters or special characters", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                ArrayList<String> tmp = priceCodeDictionary;
+                tmp.add(letter0.getText().toString().substring(0, 1).toUpperCase());
+                tmp.add(letter1.getText().toString().substring(0, 1).toUpperCase());
+                tmp.add(letter2.getText().toString().substring(0, 1).toUpperCase());
+                tmp.add(letter3.getText().toString().substring(0, 1).toUpperCase());
+                tmp.add(letter4.getText().toString().substring(0, 1).toUpperCase());
+                tmp.add(letter5.getText().toString().substring(0, 1).toUpperCase());
+                tmp.add(letter6.getText().toString().substring(0, 1).toUpperCase());
+                tmp.add(letter7.getText().toString().substring(0, 1).toUpperCase());
+                tmp.add(letter8.getText().toString().substring(0, 1).toUpperCase());
+                tmp.add(letter9.getText().toString().substring(0, 1).toUpperCase());
+
+                /*if (tmp.toArray() == priceCodeDictionary.toArray()) {
+                    Toast.makeText(getContext(), "You haven't made any valid changes", Toast.LENGTH_SHORT).show();
+                    return;
+                }*/
+                for (int i = 0; i < tmp.size(); i++) {
+                    String tmpChar = tmp.get(i);
+                    if (tmp.indexOf(tmpChar) != tmp.lastIndexOf(tmpChar)) {
+                        Toast.makeText(getContext(), "There cannot be duplicate letters. Remove the duplicate '" + tmpChar + "'", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+
+                priceCodeDictionary = tmp;
+                mListener.onUpdateLegend(priceCodeDictionary);
+            }
+        });
+
         return view;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnLegendFragmentInteractionListener) {
+            mListener = (OnLegendFragmentInteractionListener) context;
         }
         else {
             throw new RuntimeException(context.toString()
@@ -96,11 +144,23 @@ public class LegendFragment extends Fragment implements SwipeAdapter.FragmentLif
 
     @Override
     public void onResumeFragment() {
-
+        Bundle args = getArguments();
+        assert args != null;
+        priceCodeDictionary = args.getStringArrayList(ARG_DICT);
+        assert priceCodeDictionary != null;
+        letter0.setText(priceCodeDictionary.get(0));
+        letter1.setText(priceCodeDictionary.get(1));
+        letter2.setText(priceCodeDictionary.get(2));
+        letter3.setText(priceCodeDictionary.get(3));
+        letter4.setText(priceCodeDictionary.get(4));
+        letter5.setText(priceCodeDictionary.get(5));
+        letter6.setText(priceCodeDictionary.get(6));
+        letter7.setText(priceCodeDictionary.get(7));
+        letter8.setText(priceCodeDictionary.get(8));
+        letter9.setText(priceCodeDictionary.get(9));
     }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public interface OnLegendFragmentInteractionListener {
+        void onUpdateLegend(ArrayList<String> priceCodeDictionary);
     }
 }

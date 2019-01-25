@@ -3,10 +3,8 @@ package com.app.poshcalc;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,9 +19,8 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MainActivity extends FragmentActivity implements MainFragment.OnFragmentInteractionListener, SettingsFragment.OnSettingsInteractionListener, LegendFragment.OnFragmentInteractionListener {
+public class MainActivity extends FragmentActivity implements MainFragment.OnFragmentInteractionListener, SettingsFragment.OnSettingsInteractionListener, LegendFragment.OnLegendFragmentInteractionListener {
 
 //    TODO: Fine tune settings page calculation
 //    TODO: Add vector animation for sell price range
@@ -37,10 +34,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
     private static final String PREF_PROF = "profit";
     private static final String PREF_CAP = "capital";
     private static final String PREF_FEE = "fees";
+    private static final String PREF_DICT = "dictionary";
+
     private static final String ARG_TAX = "tax";
     private static final String ARG_PROF = "profit";
     private static final String ARG_CAP = "capital";
     private static final String ARG_FEE = "fees";
+    private static final String ARG_DICT = "dictionary";
 
 
     private ArrayList<String> PriceCodeDictionary;
@@ -56,18 +56,18 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         Profit = sharedPreferences.getFloat(PREF_PROF, 10);
         Capital = sharedPreferences.getFloat(PREF_CAP, 10);
         Fees = sharedPreferences.getFloat(PREF_FEE, 20);
-        System.out.print("Successfully loaded sharedPreferences from memory");
+
         PriceCodeDictionary = new ArrayList<>();
-        PriceCodeDictionary.add("P");
-        PriceCodeDictionary.add("O");
-        PriceCodeDictionary.add("S");
-        PriceCodeDictionary.add("H");
-        PriceCodeDictionary.add("U");
-        PriceCodeDictionary.add("L");
-        PriceCodeDictionary.add("A");
-        PriceCodeDictionary.add("T");
-        PriceCodeDictionary.add("E");
-        PriceCodeDictionary.add("R");
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "0", "F"));
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "1", "G"));
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "2", "H"));
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "3", "I"));
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "4", "J"));
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "5", "K"));
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "6", "L"));
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "7", "M"));
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "8", "N"));
+        PriceCodeDictionary.add(sharedPreferences.getString(PREF_DICT + "9", "O"));
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -109,8 +109,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         viewPager.setCurrentItem(1);
     }
 
-    public void showSnackbar() {
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Settings saved", Snackbar.LENGTH_SHORT);
+    public void showSnackbar(String showText) {
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, showText, Snackbar.LENGTH_SHORT);
 
         TextView text = snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
         snackbar.getView().setBackgroundColor(getColor(R.color.colorPrimaryDark));
@@ -146,6 +146,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         editor.putFloat(PREF_PROF, Profit);
         editor.putFloat(PREF_CAP, Capital);
         editor.putFloat(PREF_FEE, Fees);
+        editor.putString(PREF_DICT + "0", PriceCodeDictionary.get(0));
+        for (int i = 0; i < PriceCodeDictionary.size(); i++) {
+            editor.putString(PREF_DICT + String.valueOf(i), PriceCodeDictionary.get(i));
+        }
         editor.commit();
     }
 
@@ -227,12 +231,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
     @Override
     public void onSettingsSaved(float _taxes, float _profit, float _capital, float _fees) {
         Taxes = _taxes;
@@ -248,6 +246,24 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnFra
         mainFragment.setArguments(args);
         settingsFragment.setArguments(args);
 
-        showSnackbar();
+        showSnackbar("Settings saved");
+    }
+
+    @Override
+    public void onUpdateLegend(ArrayList<String> _priceCodeDictionary) {
+        for (int i = 0; i < _priceCodeDictionary.size(); i++) {
+            PriceCodeDictionary.set(i, _priceCodeDictionary.get(i));
+        }
+
+        updatePreferences();
+        Bundle args = new Bundle();
+        args.putStringArrayList(ARG_DICT, PriceCodeDictionary);
+        legendFragment.setArguments(args);
+        showSnackbar("Price code chart saved");
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
